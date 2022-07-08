@@ -1,5 +1,5 @@
 #
-#  makefile for Pocket SDR shared library (libsdr.so)
+#  makefile for Pocket SDR GNSS-SDR library (libsdr.so, libsdr.a)
 #
 #! You need to install libfftw3 as follows.
 #!
@@ -9,36 +9,43 @@
 CC  = gcc
 SRC = ../../src
 
-#! uncomment for Windows
-INSTALL = ../win32
+ifeq ($(OS),Windows_NT)
+    INSTALL = ../win32
+    OPTIONS = -DWIN32 -DAVX2
+    LDLIBS = ./librtk.so -lfftw3f -lwinmm
+else
+    INSTALL = ../linux
+    OPTIONS = -DAVX2
+    LDLIBS = ./librtk.so -lfftw3f
+endif
 
-#! uncomment for Linux
-#INSTALL = ../linux
+INCLUDE = -I$(SRC) -I../RTKLIB/src
+CFLAGS = -Ofast -march=native $(INCLUDE) $(OPTIONS) -Wall -fPIC -g
 
-INCLUDE = -I$(SRC)
-
-#! comment out for older CPU without AVX2
-OPTIONS = -DAVX2
-
-CFLAGS = -Ofast -march=native $(INCLUDE) $(OPTIONS) -fPIC -g
-
-LDLIBS = -lfftw3f
-
-OBJ = sdr_func.o sdr_cmn.o
+OBJ = sdr_cmn.o sdr_func.o sdr_code.o sdr_code_gal.o
 
 TARGET = libsdr.so
 
-$(TARGET) : $(OBJ)
-	$(CC) -shared -o $@ $(OBJ) $(LDLIBS)
+all : $(TARGET)
 
-sdr_func.o : $(SRC)/sdr_func.c
-	$(CC) -c $(CFLAGS) $(SRC)/sdr_func.c
+libsdr.so: $(OBJ)
+	$(CC) -shared -o $@ $(OBJ) $(LDLIBS)
 
 sdr_cmn.o : $(SRC)/sdr_cmn.c
 	$(CC) -c $(CFLAGS) $(SRC)/sdr_cmn.c
 
-sdr_func.o : $(SRC)/pocket.h
-sdr_cmn.o  : $(SRC)/pocket.h
+sdr_func.o : $(SRC)/sdr_func.c
+	$(CC) -c $(CFLAGS) $(SRC)/sdr_func.c
+
+sdr_code.o : $(SRC)/sdr_code.c
+	$(CC) -c $(CFLAGS) $(SRC)/sdr_code.c
+
+sdr_code_gal.o : $(SRC)/sdr_code_gal.c
+	$(CC) -c $(CFLAGS) $(SRC)/sdr_code_gal.c
+
+sdr_cmn.o  : $(SRC)/pocket_sdr.h
+sdr_func.o : $(SRC)/pocket_sdr.h
+sdr_code.o : $(SRC)/pocket_sdr.h
 
 clean:
 	rm -f $(TARGET) *.o

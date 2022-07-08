@@ -1,5 +1,5 @@
 #
-#  makefile for RTKLIB shared library (librtk.so)
+#  makefile for RTKLIB library (librtk.so, librtk.a)
 #
 #! You need to install RTKLIB 2.4.3 source tree as follows.
 #!
@@ -10,15 +10,15 @@ CC = gcc
 #! specify directory of RTKLIB source tree
 SRC = ../RTKLIB/src
 
-#! uncomment for Windows
-INSTALL = ../win32
-OPTIONS= -DENAGLO -DENAGAL -DENAQZS -DENACMP -DENAIRN -DNFREQ=5 -DEXOBS=3 -DSVR_REUSEADDR -DTRACE -DWIN32
-LDLIBS = -lwsock32 -lwinmm
-
-#! uncomment for Linuex
-#INSTALL = ../linux
-#OPTIONS= -DENAGLO -DENAGAL -DENAQZS -DENACMP -DENAIRN -DNFREQ=5 -DEXOBS=3 -DSVR_REUSEADDR -DTRACE
-#LDLIBS =
+ifeq ($(OS),Windows_NT)
+    INSTALL = ../win32
+    OPTIONS= -DENAGLO -DENAGAL -DENAQZS -DENACMP -DENAIRN -DNFREQ=5 -DEXOBS=3 -DSVR_REUSEADDR -DTRACE -DWIN32
+    LDLIBS = -lwsock32 -lwinmm
+else
+    INSTALL = ../linux
+    OPTIONS= -DENAGLO -DENAGAL -DENAQZS -DENACMP -DENAIRN -DNFREQ=5 -DEXOBS=3 -DSVR_REUSEADDR -DTRACE
+    LDLIBS =
+endif
 
 INCLUDE= -I$(SRC)
 WARNOPTS = -ansi -pedantic -Wall -Wno-unused-but-set-variable -Wno-unused-function -Wno-unused-const-variable
@@ -32,10 +32,15 @@ OBJ = rtkcmn.o tides.o rtksvr.o rtkpos.o postpos.o geoid.o solution.o lambda.o s
       novatel.o ublox.o ss2.o crescent.o skytraq.o javad.o nvs.o binex.o rt17.o septentrio.o \
       rtklib_wrap.o
 
-TARGET = librtk.so
+TARGET = librtk.so librtk.a
 
-$(TARGET) : $(OBJ)
+all : $(TARGET)
+
+librtk.so : $(OBJ)
 	$(CC) -shared -o $@ $(OBJ) $(LDLIBS)
+
+librtk.a  : $(OBJ)
+	$(AR) r $@ $(OBJ)
 
 rtkcmn.o   : $(SRC)/rtkcmn.c
 	$(CC) -c $(CFLAGS) $(SRC)/rtkcmn.c
