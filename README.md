@@ -32,6 +32,12 @@ B2aD, B2aP, B2bI, B3I, NavIC: L5-SPS, SBAS: L1C/A, L5I, L5Q
 
 <img src="image/pocket_sdr_image.jpg" width=80%>
 
+The introduction of Pocket SDR is shown in the following slides.
+
+T.Takasu, An Open Source GNSS SDR: Development and Application, IPNTJ Next GNSS
+Technology WG, Feb 21, 2022
+(https://gpspp.sakura.ne.jp/paper2005/IPNTJ_NEXTWG_202202.pdf)
+
 --------------------------------------------------------------------------------
 
 ## **Package Structure**
@@ -62,15 +68,9 @@ PocketSDR --+-- bin     Pocket SDR utilities and APs binary programs for Windows
 
 * Attach Pocket SDR RF frontend to PC via USB cable.
 
-* Install USB driver (CYUSB) for Pocket SDR RF frontend.
-    
-    * Open Windows Device Manager, select "EZ-USB" as "Universal Serial Bus Device"
-    * Select right-button menu Update Driver, select "Browse your computer for driver software"
-      and input the CyUSB driver path (PocketSDR\driver\).
-    * After the driver installation , you find "Cypress FX2LP Sample Device" as 
-      "Universal Serial Bus Controller" in Windows Device Manager.
-    
-    <br>
+* Install USB driver (CYUSB) for Pocket SDR RF frontend according to
+  PocketSDR\driver\readme.txt.
+
 * Add the Pocket SDR binary programs path (<install_dir>\PocketSDR\bin) to 
   the command search path (Path) of Windows environment variables.
 
