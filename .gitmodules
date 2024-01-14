@@ -1,10 +1,12 @@
-[submodule "lib/RTKLIB"]
-	path = lib/RTKLIB
-	url = https://github.com/tomojitakasu/RTKLIB
-	branch = rtklib_2.4.3
 [submodule "lib/LDPC-codes"]
 	path = lib/LDPC-codes
-	url = https://github.com/radfordneal/LDPC-codes
+	url = https://github.com/radfordneal/LDPC-codes.git
+	ignore = dirty
 [submodule "lib/libfec"]
 	path = lib/libfec
-	url = https://github.com/quiet/libfec.git
+	url = https://github.com/quiet/libfec
+	ignore = dirty
+[submodule "lib/RTKLIB"]
+	path = lib/RTKLIB
+	url = https://github.com/seanstone/RTKLIB
+	ignore = dirty

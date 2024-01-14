@@ -12,13 +12,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-#ifdef WIN32
-#include <windows.h>
-#include <CyAPI.h>
-#else
-#include <libusb-1.0/libusb.h>
-#endif
+#include <libusb.h>
 
 // constants and macros ----------------------------------------------------------------
 #define PROG_NAME       "pocket_scan" // program name
@@ -26,7 +20,7 @@
 // show usage --------------------------------------------------------------------------
 static void show_usage(void)
 {
-    printf("Usage: %s [-e]\n", PROG_NAME);
+    fprintf(stderr, "Usage: %s [-e]\n", PROG_NAME);
     exit(0);
 }
 
@@ -100,7 +94,7 @@ static int scan_usb(int ep)
         
         get_usb_string(devs[i], str, sizeof(str));
         
-        printf("(%2d) BUS=%2d PORT=%2d SPEED=%-5s ID=%04X:%04X %s\n", i,
+        fprintf(stderr, "(%2d) BUS=%2d PORT=%2d SPEED=%-5s ID=%04X:%04X %s\n", i,
              libusb_get_bus_number(devs[i]), libusb_get_port_number(devs[i]),
              speed[libusb_get_device_speed(devs[i])], desc.idVendor,
              desc.idProduct, str);
@@ -114,7 +108,7 @@ static int scan_usb(int ep)
                 ifdesc = &cfg->interface[j].altsetting[k];
                 
                 for (int m = 0; m < ifdesc->bNumEndpoints; m++) {
-                    printf("%5sIF=%2d ALT=%2d EP=%2d DIR=%s MAXSIZE=%4d\n", "",
+                    fprintf(stderr, "%5sIF=%2d ALT=%2d EP=%2d DIR=%s MAXSIZE=%4d\n", "",
                         j, k, ifdesc->endpoint[m].bEndpointAddress & 0x0F,
                         (ifdesc->endpoint[m].bEndpointAddress & 0x80) ? "IN " : "OUT",
                         ifdesc->endpoint[m].wMaxPacketSize);

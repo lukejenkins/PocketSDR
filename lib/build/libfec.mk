@@ -8,23 +8,35 @@
 #! specify directory of LIBFEC source tree
 SRC = ../libfec
 
+OS := $(shell uname)
+
 ifeq ($(OS),Windows_NT)
     INSTALL = ../win32
 else
     INSTALL = ../linux
 endif
 
-TARGET = libfec.so libfec.a
+ifeq ($(OS),Darwin)
+	CONFIGURE_ARGS = --build=x86_64-apple-darwin
+else
+	CONFIGURE_ARGS =
+endif
+
+ifeq ($(OS),Darwin)
+TARGET = libfec.a libfec.dylib
+else
+TARGET = libfec.a libfec.so
+endif
 
 all :
 	DIR=`pwd`; \
 	cd $(SRC); \
-	./configure; \
+	./configure $(CONFIGURE_ARGS); \
 	sed 's/-lc//' < makefile > makefile.p; \
 	mv makefile.p makefile; \
 	make; \
 	cd $$DIR; \
-	cp $(SRC)/libfec.so $(SRC)/libfec.a .
+	cd $(SRC) && for file in $(TARGET); do cp $$file ../build; done
 
 clean:
 	DIR=`pwd`; \

@@ -29,6 +29,8 @@
 #include <immintrin.h>
 #endif
 
+#include <sys/types.h>
+
 // constants and macros --------------------------------------------------------
 #define NTBL          256 // carrier lookup table size 
 #define DOP_STEP      0.5 // Doppler frequency search step (* 1 / code cycle)
@@ -163,7 +165,7 @@ sdr_cpx_t *sdr_read_data(const char *file, double fs, int IQ, double T,
 #else
     fpos_t pos = {0};
     fgetpos(fp, &pos);
-    size_t size = (size_t)(pos.__pos);
+    size_t size = (size_t)pos;
 #endif
     rewind(fp);
     
@@ -179,7 +181,7 @@ sdr_cpx_t *sdr_read_data(const char *file, double fs, int IQ, double T,
     pos = (size_t)off;
     fsetpos(fp, &pos);
 #else
-    pos.__pos = (__off_t)off;
+    pos = (off_t)off;
     fsetpos(fp, &pos);
 #endif
     
@@ -425,7 +427,7 @@ static void mix_carr(const sdr_cpx_t *buff, int N, double phi, double step,
     sdr_cpx_t *data)
 {
     for (int i = 0; i < N; i++) {
-        uint8_t j = (uint8_t)(phi + step * i);
+        uint8_t j = (uint8_t)(char)(phi + step * i);
         data[i][0] = buff[i][0] * carr_tbl[j][0] - buff[i][1] * carr_tbl[j][1];
         data[i][1] = buff[i][0] * carr_tbl[j][1] + buff[i][1] * carr_tbl[j][0];
     }

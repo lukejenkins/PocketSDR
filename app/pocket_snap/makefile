@@ -8,15 +8,15 @@ SRC = ../../src
 LIB = ../../lib
 BIN = ../../bin
 
-INCLUDE = -I$(SRC) -I$(LIB)/RTKLIB/src
+INCLUDE = -I$(SRC) -I$(LIB)/RTKLIB/src $(shell pkg-config --cflags fftw3f)
 
 ifeq ($(OS),Windows_NT)
     #LDLIBS = $(LIB)/win32/librtk.a -lfftw3f -lwinmm -lws2_32
     LDLIBS = $(LIB)/win32/librtk.a -lfftw3f -lfftw3f_threads -lwinmm -lws2_32
     OPTIONS = -DWIN32 -DAVX2 -Wno-unused-but-set-variable
 else
-    LDLIBS = $(LIB)/linux/librtk.a -lfftw3f -lfftw3f_threads -lpthread -lm
-    OPTIONS = -DAVX2 -Wno-unused-but-set-variable
+    LDLIBS = $(LIB)/linux/librtk.a $(shell pkg-config --libs fftw3f) -lfftw3f -lfftw3f_threads -lpthread -lm
+    OPTIONS = -Wno-unused-but-set-variable
 endif
 
 WARNOPT = -Wall -Wextra -Wno-unused-parameter

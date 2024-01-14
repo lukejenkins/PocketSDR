@@ -9,29 +9,34 @@
 CC  = gcc
 SRC = ../../src
 
+OS := $(shell uname)
+
 ifeq ($(OS),Windows_NT)
     INSTALL = ../win32
     OPTIONS = -DWIN32 -DAVX2
     LDLIBS = ./librtk.so -lfftw3f -lwinmm
 else
     INSTALL = ../linux
-    OPTIONS = -DAVX2
-    #OPTIONS = -DAVX512
-    LDLIBS = ./librtk.a -lfftw3f
+    #OPTIONS = -DAVX2
+    #LDLIBS = ./librtk.so -lfftw3f
+    LDLIBS = ./librtk.a $(shell pkg-config --libs fftw3f) -lfftw3f
 endif
 
-INCLUDE = -I$(SRC) -I../RTKLIB/src
-#CFLAGS = -Ofast -march=native $(INCLUDE) $(OPTIONS) -Wall -fPIC -g
-CFLAGS = -Ofast -mavx2 -mfma $(INCLUDE) $(OPTIONS) -Wall -fPIC -g
-#CFLAGS = -Ofast -mavx512f $(INCLUDE) $(OPTIONS) -Wall -fPIC -g
+INCLUDE = -I$(SRC) -I../RTKLIB/src $(shell pkg-config --cflags fftw3f)
+CFLAGS = -Ofast -march=native $(INCLUDE) $(OPTIONS) -Wall -fPIC -g
+#CFLAGS = -Ofast -mavx2 -mfma $(INCLUDE) $(OPTIONS) -Wall -fPIC -g
 
 OBJ = sdr_cmn.o sdr_func.o sdr_code.o sdr_code_gal.o
 
+ifeq ($(OS),Darwin)
+TARGET = libsdr.dylib
+else
 TARGET = libsdr.so
+endif
 
 all : $(TARGET)
 
-libsdr.so: $(OBJ)
+libsdr.dylib libsdr.so: $(OBJ)
 	$(CC) -shared -o $@ $(OBJ) $(LDLIBS)
 
 sdr_cmn.o : $(SRC)/sdr_cmn.c

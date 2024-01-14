@@ -93,6 +93,40 @@ $ pacman -S mingw-w64-x86_64-fftw
 
 --------------------------------------------------------------------------------
 
+## **Installation for macOS**
+
+* Clone from this repo from ssh
+```
+    $ git clone git@github.com:seanstone/PocketSDR.git
+```
+* Cd in to the file diection and get dependencies via git submodules
+```
+    $ git submodule update --init --recursive
+```
+* Install pkg-config
+```
+    $ brew install pkg-config
+```
+* Install libusb-1.0 developtment package. For Ubuntu:
+```
+    $ brew install libusb
+```
+* Install fftw developtment package.
+```
+    $ brew install fftw
+```
+* Install python and packages
+```
+   $ brew install python
+   $ pip install numpy matplotlib scipy
+```
+* Build libraries, utilities and APs.
+```
+    $ make -j
+```
+
+--------------------------------------------------------------------------------
+
 ## **Installation for Linux**
 
 * Extract PocketSDR.zip or clone the Git repository to an appropriate directory <install_dir>.
@@ -308,4 +342,3 @@ Pocket SDR. Refer "Installation for Windows" above.
 * 2024-01-03  0.9  Add C-version of pocket_snap.py.
                    pocket_trk supports multi-signal and multi-threading
 * 2024-01-12  0.10 Support NavIC L1-SPS-D, L1-SPS-P, GLONASS L1OCd, L1OCp and L2OCp.
-
